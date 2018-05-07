@@ -1,6 +1,26 @@
 # CarND-Controls-PID
 Self-Driving Car Engineer Nanodegree Program
 
+### Steering Controller
+According to the lecture, the steering angle control is the combination of three components:
+1. Proportional control.
+2. Differential control.
+3. Integral control.
+
+The equation is the following:
+```apple js
+steer_angle = - (K_p * error_p + K_i * error_i + K_d * error_d)  
+```
+K_p, K_i, K_d are the gains of the three PID components. error_p is the cross track error (CTE), error_i is the integral of CTE and error_d is the differential of CTE.
+There are a few scalings performed beforehand. Firstly, the CTE is divided by a factor of 8. This ensures that steering angle approximately lies between -1 and 1 for K_p ~ 1 and makes tuning easier later on. Further, error_i is multiplied by a factor dt and error_d is divided by a factor dt. I chosedt = 0.07 which then ensures that K_i and K_d are also approximately 1 in order to achieve steering angle between -1 and 1.
+
+First I want to explore the effect of proportional component. I tried K_p from 0.001 to 0.1 and found the car goes farther when increasing K_p. However, the car tends overshoots and oscillates wildly, and eventually goes off the track. This is expected. Below is the video.
+
+Then I tuned K_d which is differential component. I expect this parameter to mitigate the overshoot effect. I set different values, say 1, 2, 3, 4 and finally I set it to 3.5. The video is below and we can see that the car is able to finish the entire track. The car is still jerky but anyways it does not go off the track.
+
+Finally I tuned K_i which is expected to mitigate the negative effect of systematic bias. I found this parameter makes the vehicle more sticky to the center. The parameter needs to be small (0.001), larger numbers I tried makes the vehicle oscillates wildly. I believe this is due to the integral of CTE is large and cause the change of steering angle to change dramatically. 
+Below is the finally video with K_p = 0.1, K_d = 3.5, and K_i = 0.001.
+
 ---
 
 ## Dependencies
