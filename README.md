@@ -13,15 +13,17 @@ steer_angle = - (K_p * error_p + K_i * error_i + K_d * error_d)
 ```
 K_p, K_i, K_d are the gains of the three PID components. error_p is the cross track error (CTE), error_i is the integral of CTE and error_d is the differential of CTE.
 
-First I want to explore the effect of proportional component. I tried K_p from 0.001 to 0.1 and found the car goes farther when increasing K_p. However, the car tends overshoots and oscillates wildly, and eventually goes off the track. This is expected. Below is the video.
+Initially I set all paramters to zero.
+
+First I want to explore the effect of proportional component. I tried K_p from 0.001 to 0.1 and found the car goes farther when increasing K_p. Small value makes the car kicked out immediately from the start point. However, with large value the car still tends overshoots and oscillates wildly, and eventually goes off the track. This is expected as proportional component only considers the distance between the vehicle and the lane. So the model only wants to minimuze the distance while does not pay attention to the steering angle which causes the vehicle to overshoot.  Below is the video.
 
 [video_Kp_0.1](https://youtu.be/45bhJCl2FWQ)
 
-Then I tuned K_d which is differential component. I expect this parameter to mitigate the overshoot effect. I set different values, say 1, 2, 3, 4 and finally I set it to 3.5. The video is below and we can see that the car is able to finish the entire track. The car is still jerky but anyways it does not go off the track.
+Then I tuned K_d which is differential component on top of K_p. I expect this parameter to mitigate the overshoot effect as it takes the change of the steering angle into account. When the model tries to minimize CTE, it makes the steering angle less jerky. I set different values, say 1, 2, 3, 4 and finally I set it to 3.5. When I increase the parameter, I can see the vehicle drives more smoothly until a point when there is no obvious improvement. The video is below and we can see that the car is able to finish the entire track. The car is still jerky but much better than the first video, at least it does not go off the track.
 
 [video_Kp_0.1_Kd_3.5](https://youtu.be/sfPnYObjziY)
 
-Finally I tuned K_i which is expected to mitigate the negative effect of systematic bias. I found this parameter makes the vehicle more sticky to the center. The parameter needs to be small (0.001), larger numbers I tried makes the vehicle oscillates wildly. I believe this is due to the integral of CTE is large and cause the change of steering angle to change dramatically. 
+Finally I tuned K_i which is expected to mitigate the negative effect of systematic bias. I found this parameter makes the vehicle more sticky to the center. The parameter needs to be small (0.001), larger numbers I tried such as 0.1, 0.05 makes the vehicle oscillates wildly. I believe this is due to the integral of CTE is large and cause the change of steering angle to change dramatically. 
 Below is the finally video with K_p = 0.1, K_d = 3.5, and K_i = 0.001.
 
 [video_Kp_0.1_Kd_3.5_Ki_0.001](https://youtu.be/7dYpydXCvk8)
